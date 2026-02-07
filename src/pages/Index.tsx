@@ -3,6 +3,7 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import PostGrid from "@/components/profile/PostGrid";
 import MusicList from "@/components/profile/MusicList";
+import BottomNav from "@/components/BottomNav";
 
 type TabType = "grid" | "reposts" | "saved" | "music";
 
@@ -44,6 +45,7 @@ const mockMusic = [
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<TabType>("grid");
+  const [activeNavTab, setActiveNavTab] = useState("profile");
 
   const renderContent = () => {
     switch (activeTab) {
@@ -81,9 +83,11 @@ const Index = () => {
         showMusic={true}
       />
       
-      <div className="pb-20">
+      <div className="pb-24">
         {renderContent()}
       </div>
+
+      <BottomNav activeTab={activeNavTab} onTabChange={setActiveNavTab} />
     </div>
   );
 };
