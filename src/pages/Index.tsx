@@ -86,10 +86,7 @@ const Index = () => {
   const fetchData = async () => {
     try {
       // Fetch profile
-      const { data: profileData } = await supabase
-        .from("profile_settings")
-        .select("*")
-        .single();
+      const { data: profileData } = await supabase.from("profile_settings").select("*").single();
       if (profileData) {
         setProfile({
           display_name: profileData.display_name,
@@ -101,25 +98,24 @@ const Index = () => {
           likes: profileData.likes || 0,
           website_url: profileData.website_url || "",
           is_verified: profileData.is_top || false,
-          verified_badge_url: profileData.verified_badge_url || "",
+          verified_badge_url: (profileData as any).verified_badge_url || "",
           has_subscription: profileData.has_subscription || false,
-          contact_url: profileData.contact_url || "",
+          contact_url: (profileData as any).contact_url || "",
         });
       }
 
       // Fetch posts
-      const { data: postsData } = await supabase
-        .from("posts")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data: postsData } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
       if (postsData) {
-        setPosts(postsData.map(p => ({
-          id: p.id,
-          thumbnail_url: p.thumbnail_url,
-          is_video: p.is_video ?? true,
-          views: p.views ?? 0,
-          date: p.date,
-        })));
+        setPosts(
+          postsData.map((p) => ({
+            id: p.id,
+            thumbnail_url: p.thumbnail_url,
+            is_video: p.is_video ?? true,
+            views: p.views ?? 0,
+            date: p.date,
+          })),
+        );
       }
 
       // Fetch music
@@ -128,21 +124,20 @@ const Index = () => {
         .select("*")
         .order("created_at", { ascending: false });
       if (musicData) {
-        setMusic(musicData.map(m => ({
-          id: m.id,
-          title: m.title,
-          thumbnail_url: m.thumbnail_url,
-          used_by_videos: m.used_by_videos ?? 0,
-          duration: m.duration || "01:00",
-        })));
+        setMusic(
+          musicData.map((m) => ({
+            id: m.id,
+            title: m.title,
+            thumbnail_url: m.thumbnail_url,
+            used_by_videos: m.used_by_videos ?? 0,
+            duration: m.duration || "01:00",
+          })),
+        );
       }
 
       // Fetch payment (may fail if not authenticated)
       try {
-        const { data: paymentData } = await supabase
-          .from("payment_info")
-          .select("*")
-          .single();
+        const { data: paymentData } = await supabase.from("payment_info").select("*").single();
         if (paymentData) {
           setPayment({
             bank_name: paymentData.bank_name || "",
@@ -175,7 +170,7 @@ const Index = () => {
       case "music":
         return <MusicList tracks={music} />;
       case "grid":
-        return <PostGrid posts={posts.map(p => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
+        return <PostGrid posts={posts.map((p) => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
       case "payment":
         return <PaymentCard payment={payment} />;
       case "saved":
@@ -196,12 +191,18 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticlesBackground />
-      
+
       {/* Gradient orbs for iOS-like effect */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
-      <div className="fixed bottom-1/4 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="fixed top-1/2 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
-      
+      <div
+        className="fixed bottom-1/4 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl pointer-events-none animate-pulse"
+        style={{ animationDelay: "1s" }}
+      />
+      <div
+        className="fixed top-1/2 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"
+        style={{ animationDelay: "2s" }}
+      />
+
       <div className="relative z-10 max-w-md mx-auto">
         <ProfileHeader
           avatarUrl={profile.avatar_url || defaultProfile.avatar_url}
@@ -217,16 +218,10 @@ const Index = () => {
           subscription={profile.has_subscription}
           contactUrl={profile.contact_url}
         />
-        
-        <ProfileTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          showPayment={true}
-        />
-        
-        <div className="pb-24">
-          {renderContent()}
-        </div>
+
+        <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} showPayment={true} />
+
+        <div className="pb-24">{renderContent()}</div>
 
         <BottomNav activeTab={activeNavTab} onTabChange={handleNavChange} />
       </div>
