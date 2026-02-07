@@ -101,9 +101,9 @@ const Index = () => {
           likes: profileData.likes || 0,
           website_url: profileData.website_url || "",
           is_verified: profileData.is_top || false,
-          verified_badge_url: (profileData as any).verified_badge_url || "",
+          verified_badge_url: profileData.verified_badge_url || "",
           has_subscription: profileData.has_subscription || false,
-          contact_url: (profileData as any).contact_url || "",
+          contact_url: profileData.contact_url || "",
         });
       }
 
