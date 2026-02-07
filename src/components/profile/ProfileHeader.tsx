@@ -1,6 +1,5 @@
-import { Bell, Share2, ChevronLeft, ChevronDown, Crown, Settings } from "lucide-react";
+import { Bell, Share2, ChevronLeft, ChevronDown, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 
 interface ProfileHeaderProps {
@@ -14,6 +13,7 @@ interface ProfileHeaderProps {
   bio: string;
   websiteUrl?: string;
   subscription?: boolean;
+  contactUrl?: string;
 }
 
 const ProfileHeader = ({
@@ -27,6 +27,7 @@ const ProfileHeader = ({
   bio,
   websiteUrl,
   subscription = false,
+  contactUrl,
 }: ProfileHeaderProps) => {
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
@@ -45,24 +46,17 @@ const ProfileHeader = ({
       
       {/* Top Navigation */}
       <div className="w-full flex items-center justify-between mb-6 relative z-10">
-        <button className="p-2 -ml-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
+        <button className="p-2 -ml-2 hover:bg-muted/50 rounded-full transition-all duration-300 active:scale-95 glass">
           <ChevronLeft className="w-6 h-6 text-foreground" />
         </button>
         <div className="flex items-center gap-1">
           <ThemeToggle />
-          <button className="p-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
+          <button className="p-2 hover:bg-muted/50 rounded-full transition-all duration-300 active:scale-95 glass">
             <Bell className="w-5 h-5 text-foreground" />
           </button>
-          <button className="p-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
+          <button className="p-2 hover:bg-muted/50 rounded-full transition-all duration-300 active:scale-95 glass">
             <Share2 className="w-5 h-5 text-foreground" />
           </button>
-          <Link 
-            to="/auth" 
-            className="p-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95"
-            title="Admin"
-          >
-            <Settings className="w-5 h-5 text-foreground" />
-          </Link>
         </div>
       </div>
 
@@ -117,17 +111,29 @@ const ProfileHeader = ({
         >
           Follow
         </Button>
-        <Button 
-          variant="message" 
-          size="action" 
-          className="transition-all duration-300 hover:scale-105 gradient-border"
-        >
-          Message
-        </Button>
+        {contactUrl ? (
+          <a href={contactUrl} target="_blank" rel="noopener noreferrer">
+            <Button 
+              variant="message" 
+              size="action" 
+              className="transition-all duration-300 hover:scale-105 gradient-border glass"
+            >
+              Message
+            </Button>
+          </a>
+        ) : (
+          <Button 
+            variant="message" 
+            size="action" 
+            className="transition-all duration-300 hover:scale-105 gradient-border glass"
+          >
+            Message
+          </Button>
+        )}
         <Button 
           variant="icon" 
           size="icon" 
-          className="rounded-full transition-all duration-300 hover:scale-110 hover:rotate-180"
+          className="rounded-full transition-all duration-300 hover:scale-110 hover:rotate-180 glass"
         >
           <ChevronDown className="w-5 h-5" />
         </Button>

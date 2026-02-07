@@ -25,6 +25,7 @@ interface ProfileSettings {
   website_url: string;
   is_top: boolean;
   has_subscription: boolean;
+  contact_url: string;
 }
 
 interface Post {
@@ -99,7 +100,10 @@ const Admin = () => {
         .from("profile_settings")
         .select("*")
         .single();
-      if (profileData) setProfile(profileData);
+      if (profileData) setProfile({
+        ...profileData,
+        contact_url: (profileData as any).contact_url || "",
+      });
 
       // Fetch posts
       const { data: postsData } = await supabase
@@ -516,6 +520,14 @@ const Admin = () => {
                       placeholder="https://..."
                       value={profile.website_url}
                       onChange={(e) => setProfile({ ...profile, website_url: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Liên kết Message (Zalo, Facebook...)</Label>
+                    <Input
+                      placeholder="https://zalo.me/... hoặc https://m.me/..."
+                      value={profile.contact_url || ""}
+                      onChange={(e) => setProfile({ ...profile, contact_url: e.target.value })}
                     />
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">

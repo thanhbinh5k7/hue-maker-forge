@@ -7,8 +7,9 @@ import PostGrid from "@/components/profile/PostGrid";
 import MusicList from "@/components/profile/MusicList";
 import PaymentCard from "@/components/profile/PaymentCard";
 import BottomNav from "@/components/BottomNav";
+import ParticlesBackground from "@/components/ParticlesBackground";
 
-type TabType = "music" | "grid" | "payment" | "reposts" | "saved";
+type TabType = "music" | "grid" | "payment" | "saved";
 
 interface ProfileSettings {
   display_name: string;
@@ -21,6 +22,7 @@ interface ProfileSettings {
   website_url: string;
   is_top: boolean;
   has_subscription: boolean;
+  contact_url: string;
 }
 
 interface Post {
@@ -60,6 +62,7 @@ const defaultProfile: ProfileSettings = {
   website_url: "https://ipinfo.io/json",
   is_top: true,
   has_subscription: true,
+  contact_url: "",
 };
 
 const Index = () => {
@@ -97,6 +100,7 @@ const Index = () => {
           website_url: profileData.website_url || "",
           is_top: profileData.is_top || false,
           has_subscription: profileData.has_subscription || false,
+          contact_url: (profileData as any).contact_url || "",
         });
       }
 
@@ -171,8 +175,6 @@ const Index = () => {
         return <PostGrid posts={posts.map(p => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
       case "payment":
         return <PaymentCard payment={payment} />;
-      case "reposts":
-        return <PostGrid posts={[]} showReposts />;
       case "saved":
         return <PostGrid posts={[]} />;
       default:
@@ -189,31 +191,41 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background max-w-md mx-auto">
-      <ProfileHeader
-        avatarUrl={profile.avatar_url || defaultProfile.avatar_url}
-        displayName={profile.display_name}
-        username={profile.username}
-        isTop={profile.is_top}
-        following={profile.following}
-        followers={profile.followers}
-        likes={profile.likes}
-        bio={profile.bio}
-        websiteUrl={profile.website_url}
-        subscription={profile.has_subscription}
-      />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <ParticlesBackground />
       
-      <ProfileTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        showPayment={true}
-      />
+      {/* Gradient orbs for iOS-like effect */}
+      <div className="fixed top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="fixed bottom-1/4 right-0 w-80 h-80 bg-accent/15 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '1s' }} />
+      <div className="fixed top-1/2 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
       
-      <div className="pb-24">
-        {renderContent()}
-      </div>
+      <div className="relative z-10 max-w-md mx-auto">
+        <ProfileHeader
+          avatarUrl={profile.avatar_url || defaultProfile.avatar_url}
+          displayName={profile.display_name}
+          username={profile.username}
+          isTop={profile.is_top}
+          following={profile.following}
+          followers={profile.followers}
+          likes={profile.likes}
+          bio={profile.bio}
+          websiteUrl={profile.website_url}
+          subscription={profile.has_subscription}
+          contactUrl={profile.contact_url}
+        />
+        
+        <ProfileTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          showPayment={true}
+        />
+        
+        <div className="pb-24">
+          {renderContent()}
+        </div>
 
-      <BottomNav activeTab={activeNavTab} onTabChange={handleNavChange} />
+        <BottomNav activeTab={activeNavTab} onTabChange={handleNavChange} />
+      </div>
     </div>
   );
 };
