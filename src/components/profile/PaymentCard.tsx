@@ -1,3 +1,5 @@
+import { CreditCard } from "lucide-react";
+
 interface PaymentInfo {
   bank_name: string;
   account_number: string;
@@ -14,8 +16,11 @@ interface PaymentCardProps {
 const PaymentCard = ({ payment }: PaymentCardProps) => {
   if (!payment) {
     return (
-      <div className="p-8 text-center text-muted-foreground">
-        Chưa có thông tin thanh toán
+      <div className="p-12 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
+          <CreditCard className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground font-medium">Chưa có thông tin thanh toán</p>
       </div>
     );
   }
@@ -24,8 +29,11 @@ const PaymentCard = ({ payment }: PaymentCardProps) => {
 
   if (!hasPaymentInfo) {
     return (
-      <div className="p-8 text-center text-muted-foreground">
-        Chưa có thông tin thanh toán
+      <div className="p-12 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
+          <CreditCard className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <p className="text-muted-foreground font-medium">Chưa có thông tin thanh toán</p>
       </div>
     );
   }
@@ -33,39 +41,48 @@ const PaymentCard = ({ payment }: PaymentCardProps) => {
   return (
     <div className="p-4 space-y-4">
       {payment.bank_name && (
-        <div className="bg-card rounded-xl border border-border p-4 space-y-2">
-          <h3 className="font-semibold text-foreground flex items-center gap-2">
+        <div className="gradient-card rounded-2xl border border-border/50 p-5 space-y-3 shadow-soft hover:shadow-medium transition-shadow">
+          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">
             🏦 Ngân hàng
           </h3>
-          <div className="space-y-1 text-sm">
-            <p><span className="text-muted-foreground">Ngân hàng:</span> {payment.bank_name}</p>
-            <p><span className="text-muted-foreground">Số tài khoản:</span> {payment.account_number}</p>
-            <p><span className="text-muted-foreground">Chủ TK:</span> {payment.account_holder}</p>
+          <div className="space-y-2 text-sm">
+            <p className="flex justify-between">
+              <span className="text-muted-foreground">Ngân hàng:</span>
+              <span className="font-semibold">{payment.bank_name}</span>
+            </p>
+            <p className="flex justify-between">
+              <span className="text-muted-foreground">Số tài khoản:</span>
+              <span className="font-mono font-semibold">{payment.account_number}</span>
+            </p>
+            <p className="flex justify-between">
+              <span className="text-muted-foreground">Chủ TK:</span>
+              <span className="font-semibold">{payment.account_holder}</span>
+            </p>
           </div>
         </div>
       )}
 
       {payment.momo_number && (
-        <div className="bg-card rounded-xl border border-border p-4 space-y-2">
-          <h3 className="font-semibold text-foreground flex items-center gap-2">
+        <div className="bg-gradient-to-br from-pink-500/10 to-purple-500/10 rounded-2xl border border-pink-200 dark:border-pink-900/50 p-5 space-y-2 shadow-soft">
+          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">
             💜 MoMo
           </h3>
-          <p className="text-sm">{payment.momo_number}</p>
+          <p className="font-mono text-lg font-semibold">{payment.momo_number}</p>
         </div>
       )}
 
       {payment.zalopay_number && (
-        <div className="bg-card rounded-xl border border-border p-4 space-y-2">
-          <h3 className="font-semibold text-foreground flex items-center gap-2">
+        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl border border-blue-200 dark:border-blue-900/50 p-5 space-y-2 shadow-soft">
+          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">
             💙 ZaloPay
           </h3>
-          <p className="text-sm">{payment.zalopay_number}</p>
+          <p className="font-mono text-lg font-semibold">{payment.zalopay_number}</p>
         </div>
       )}
 
       {payment.notes && (
-        <div className="bg-muted rounded-xl p-4">
-          <p className="text-sm text-muted-foreground">{payment.notes}</p>
+        <div className="bg-muted/50 rounded-2xl p-5">
+          <p className="text-sm text-muted-foreground italic">{payment.notes}</p>
         </div>
       )}
     </div>

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, Sparkles } from "lucide-react";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -47,28 +47,33 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md animate-fade-in">
-        <div className="bg-card rounded-2xl shadow-medium p-8 border border-border">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute top-0 left-0 w-96 h-96 gradient-primary opacity-20 blur-3xl rounded-full -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 gradient-ocean opacity-20 blur-3xl rounded-full translate-x-1/2 translate-y-1/2" />
+      
+      <div className="w-full max-w-md animate-fade-in relative z-10">
+        <div className="gradient-card rounded-3xl shadow-medium p-8 border border-border/50 backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full gradient-primary flex items-center justify-center">
-              <Lock className="w-8 h-8 text-primary-foreground" />
+            <div className="w-20 h-20 mx-auto mb-5 rounded-2xl gradient-primary flex items-center justify-center shadow-glow rotate-3 hover:rotate-0 transition-transform duration-500">
+              <Lock className="w-10 h-10 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {isSignUp ? "Đăng ký Admin" : "Đăng nhập Admin"}
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              {isSignUp ? "Đăng ký" : "Đăng nhập"}
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground flex items-center justify-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
               {isSignUp
                 ? "Tạo tài khoản admin để quản lý"
-                : "Đăng nhập để quản lý profile"}
+                : "Chào mừng trở lại, Admin!"}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-semibold">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -76,12 +81,12 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12"
+                className="h-12 rounded-xl border-2 focus:border-primary transition-colors"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mật khẩu</Label>
+              <Label htmlFor="password" className="text-sm font-semibold">Mật khẩu</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -91,12 +96,12 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="h-12 pr-12"
+                  className="h-12 rounded-xl pr-12 border-2 focus:border-primary transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -106,13 +111,13 @@ const Auth = () => {
             <Button
               type="submit"
               variant="follow"
-              className="w-full h-12 text-base"
+              className="w-full h-12 text-base rounded-xl"
               disabled={isLoading}
             >
               {isLoading
                 ? "Đang xử lý..."
                 : isSignUp
-                ? "Đăng ký"
+                ? "Tạo tài khoản"
                 : "Đăng nhập"}
             </Button>
           </form>
@@ -122,11 +127,11 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium"
             >
               {isSignUp
-                ? "Đã có tài khoản? Đăng nhập"
-                : "Chưa có tài khoản? Đăng ký"}
+                ? "Đã có tài khoản? Đăng nhập ngay"
+                : "Chưa có tài khoản? Đăng ký ngay"}
             </button>
           </div>
 
@@ -134,7 +139,7 @@ const Auth = () => {
           <div className="mt-4 text-center">
             <button
               onClick={() => navigate("/")}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
             >
               ← Quay lại trang chính
             </button>

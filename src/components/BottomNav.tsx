@@ -16,8 +16,8 @@ const BottomNav = ({ activeTab = "profile", onTabChange }: BottomNavProps) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
-      <div className="max-w-md mx-auto flex items-center justify-around py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-border/50">
+      <div className="max-w-md mx-auto flex items-center justify-around py-2 px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -29,8 +29,8 @@ const BottomNav = ({ activeTab = "profile", onTabChange }: BottomNavProps) => {
                 onClick={() => onTabChange?.(tab.id)}
                 className="flex items-center justify-center group"
               >
-                <div className="relative w-12 h-8 rounded-lg overflow-hidden gradient-primary flex items-center justify-center hover:opacity-90 transition-opacity active:scale-95">
-                  <Icon className="w-5 h-5 text-primary-foreground" />
+                <div className="relative w-14 h-10 rounded-2xl overflow-hidden gradient-primary flex items-center justify-center hover:opacity-90 transition-all duration-300 active:scale-95 shadow-glow">
+                  <Icon className="w-6 h-6 text-primary-foreground" />
                 </div>
               </button>
             );
@@ -41,12 +41,20 @@ const BottomNav = ({ activeTab = "profile", onTabChange }: BottomNavProps) => {
               key={tab.id}
               onClick={() => onTabChange?.(tab.id)}
               className={cn(
-                "flex flex-col items-center gap-0.5 py-1 px-3 transition-all duration-200 active:scale-95",
-                isActive ? "text-foreground" : "text-muted-foreground"
+                "flex flex-col items-center gap-0.5 py-1.5 px-4 transition-all duration-300 active:scale-95 rounded-xl",
+                isActive 
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className={cn("w-6 h-6 transition-transform", isActive && "scale-110")} />
-              <span className="text-[10px] font-medium">{tab.label}</span>
+              <Icon className={cn(
+                "w-6 h-6 transition-all duration-300", 
+                isActive && "scale-110 drop-shadow-sm"
+              )} />
+              <span className={cn(
+                "text-[10px] font-medium transition-all",
+                isActive && "font-semibold"
+              )}>{tab.label}</span>
             </button>
           );
         })}
