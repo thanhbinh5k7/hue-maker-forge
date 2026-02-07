@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { Grid3X3, Repeat2, Bookmark, Music } from "lucide-react";
+import { Grid3X3, Repeat2, Bookmark, Music, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type TabType = "grid" | "reposts" | "saved" | "music";
+type TabType = "music" | "grid" | "payment" | "reposts" | "saved";
 
 interface ProfileTabsProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
-  showMusic?: boolean;
+  showPayment?: boolean;
 }
 
-const ProfileTabs = ({ activeTab, onTabChange, showMusic = false }: ProfileTabsProps) => {
+const ProfileTabs = ({ activeTab, onTabChange, showPayment = false }: ProfileTabsProps) => {
   const tabs = [
+    { id: "music" as TabType, icon: Music, label: "Music" },
     { id: "grid" as TabType, icon: Grid3X3, label: "Posts" },
     { id: "reposts" as TabType, icon: Repeat2, label: "Reposts" },
     { id: "saved" as TabType, icon: Bookmark, label: "Saved" },
-    ...(showMusic ? [{ id: "music" as TabType, icon: Music, label: "Music" }] : []),
+    ...(showPayment ? [{ id: "payment" as TabType, icon: CreditCard, label: "Payment" }] : []),
   ];
 
   return (

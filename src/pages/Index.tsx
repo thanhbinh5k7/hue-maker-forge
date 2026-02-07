@@ -1,93 +1,219 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileTabs from "@/components/profile/ProfileTabs";
 import PostGrid from "@/components/profile/PostGrid";
 import MusicList from "@/components/profile/MusicList";
+import PaymentCard from "@/components/profile/PaymentCard";
 import BottomNav from "@/components/BottomNav";
 
-type TabType = "grid" | "reposts" | "saved" | "music";
+type TabType = "music" | "grid" | "payment" | "reposts" | "saved";
 
-// Mock data
-const mockPosts = [
-  { id: "1", thumbnailUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop", isVideo: true, views: 125000 },
-  { id: "2", thumbnailUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop", isVideo: true, views: 89000 },
-  { id: "3", thumbnailUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=600&fit=crop", isVideo: true, views: 234000 },
-  { id: "4", thumbnailUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop", isVideo: true, views: 56000 },
-  { id: "5", thumbnailUrl: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=600&fit=crop", isVideo: true, views: 178000 },
-  { id: "6", thumbnailUrl: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&h=600&fit=crop", isVideo: true, views: 445000 },
-  { id: "7", thumbnailUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=600&fit=crop", isVideo: true, views: 92000 },
-  { id: "8", thumbnailUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop", isVideo: true, views: 167000 },
-  { id: "9", thumbnailUrl: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=600&fit=crop", isVideo: true, views: 298000 },
-];
+interface ProfileSettings {
+  display_name: string;
+  username: string;
+  bio: string;
+  avatar_url: string;
+  following: number;
+  followers: number;
+  likes: number;
+  website_url: string;
+  is_top: boolean;
+  has_subscription: boolean;
+}
 
-const mockReposts = [
-  { id: "r1", thumbnailUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=600&fit=crop", isRepost: true, date: "3d" },
-  { id: "r2", thumbnailUrl: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&h=600&fit=crop", isRepost: true, date: "4d" },
-  { id: "r3", thumbnailUrl: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=600&fit=crop", isRepost: true, date: "4d" },
-  { id: "r4", thumbnailUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=600&fit=crop", isRepost: true, date: "Jan 26" },
-  { id: "r5", thumbnailUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=600&fit=crop", isRepost: true, date: "Jan 25" },
-  { id: "r6", thumbnailUrl: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=400&h=600&fit=crop", isRepost: true, date: "Jan 25" },
-];
+interface Post {
+  id: string;
+  thumbnail_url: string;
+  is_video: boolean;
+  views: number;
+  date: string | null;
+}
 
-const mockSaved = [
-  { id: "s1", thumbnailUrl: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=600&fit=crop", isVideo: true },
-  { id: "s2", thumbnailUrl: "https://images.unsplash.com/photo-1682687221038-404670f01d03?w=400&h=600&fit=crop", isVideo: true },
-  { id: "s3", thumbnailUrl: "https://images.unsplash.com/photo-1682695796954-bad0d0f59ff1?w=400&h=600&fit=crop", isVideo: true },
-];
+interface MusicTrack {
+  id: string;
+  title: string;
+  thumbnail_url: string;
+  used_by_videos: number;
+  duration: string;
+}
 
-const mockMusic = [
-  { id: "m1", title: "Dù Có Cách Em ...", thumbnailUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop", usedByVideos: 75, duration: "01:00" },
-  { id: "m2", title: "Nắng Lung Linh - Vietj ...", thumbnailUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&h=200&fit=crop", usedByVideos: 42, duration: "01:00" },
-  { id: "m3", title: "Em Ơi Stop (Extended) ...", thumbnailUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop", usedByVideos: 7, duration: "01:00" },
-  { id: "m4", title: "Cùng Anh (Extended) ...", thumbnailUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop", usedByVideos: 2, duration: "01:00" },
-  { id: "m5", title: "Ghé Vào Dilema ...", thumbnailUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop", usedByVideos: 2, duration: "01:00" },
-];
+interface PaymentInfo {
+  bank_name: string;
+  account_number: string;
+  account_holder: string;
+  momo_number: string;
+  zalopay_number: string;
+  notes: string;
+}
+
+// Fallback data
+const defaultProfile: ProfileSettings = {
+  display_name: "One",
+  username: "tb__________________tb",
+  bio: "@✳️",
+  avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
+  following: 90,
+  followers: 154000,
+  likes: 154800,
+  website_url: "https://ipinfo.io/json",
+  is_top: true,
+  has_subscription: true,
+};
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("grid");
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabType>("music");
   const [activeNavTab, setActiveNavTab] = useState("profile");
+  const [loading, setLoading] = useState(true);
+
+  // Data from database
+  const [profile, setProfile] = useState<ProfileSettings>(defaultProfile);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [music, setMusic] = useState<MusicTrack[]>([]);
+  const [payment, setPayment] = useState<PaymentInfo | null>(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Fetch profile
+      const { data: profileData } = await supabase
+        .from("profile_settings")
+        .select("*")
+        .single();
+      if (profileData) {
+        setProfile({
+          display_name: profileData.display_name,
+          username: profileData.username,
+          bio: profileData.bio || "",
+          avatar_url: profileData.avatar_url || defaultProfile.avatar_url,
+          following: profileData.following || 0,
+          followers: profileData.followers || 0,
+          likes: profileData.likes || 0,
+          website_url: profileData.website_url || "",
+          is_top: profileData.is_top || false,
+          has_subscription: profileData.has_subscription || false,
+        });
+      }
+
+      // Fetch posts
+      const { data: postsData } = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (postsData) {
+        setPosts(postsData.map(p => ({
+          id: p.id,
+          thumbnail_url: p.thumbnail_url,
+          is_video: p.is_video ?? true,
+          views: p.views ?? 0,
+          date: p.date,
+        })));
+      }
+
+      // Fetch music
+      const { data: musicData } = await supabase
+        .from("music_tracks")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (musicData) {
+        setMusic(musicData.map(m => ({
+          id: m.id,
+          title: m.title,
+          thumbnail_url: m.thumbnail_url,
+          used_by_videos: m.used_by_videos ?? 0,
+          duration: m.duration || "01:00",
+        })));
+      }
+
+      // Fetch payment (may fail if not authenticated)
+      try {
+        const { data: paymentData } = await supabase
+          .from("payment_info")
+          .select("*")
+          .single();
+        if (paymentData) {
+          setPayment({
+            bank_name: paymentData.bank_name || "",
+            account_number: paymentData.account_number || "",
+            account_holder: paymentData.account_holder || "",
+            momo_number: paymentData.momo_number || "",
+            zalopay_number: paymentData.zalopay_number || "",
+            notes: paymentData.notes || "",
+          });
+        }
+      } catch {
+        // Payment info not accessible for unauthenticated users
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNavChange = (tab: string) => {
+    setActiveNavTab(tab);
+    if (tab === "profile") {
+      navigate("/");
+    }
+  };
 
   const renderContent = () => {
     switch (activeTab) {
-      case "grid":
-        return <PostGrid posts={mockPosts} />;
-      case "reposts":
-        return <PostGrid posts={mockReposts} showReposts />;
-      case "saved":
-        return <PostGrid posts={mockSaved} />;
       case "music":
-        return <MusicList tracks={mockMusic} />;
+        return <MusicList tracks={music} />;
+      case "grid":
+        return <PostGrid posts={posts.map(p => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
+      case "payment":
+        return <PaymentCard payment={payment} />;
+      case "reposts":
+        return <PostGrid posts={[]} showReposts />;
+      case "saved":
+        return <PostGrid posts={[]} />;
       default:
-        return <PostGrid posts={mockPosts} />;
+        return <MusicList tracks={music} />;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto">
       <ProfileHeader
-        avatarUrl="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop"
-        displayName="One"
-        username="tb__________________tb"
-        isTop={true}
-        following={90}
-        followers={154000}
-        likes={154800}
-        bio="@✳️"
-        websiteUrl="https://ipinfo.io/json"
-        subscription={true}
+        avatarUrl={profile.avatar_url || defaultProfile.avatar_url}
+        displayName={profile.display_name}
+        username={profile.username}
+        isTop={profile.is_top}
+        following={profile.following}
+        followers={profile.followers}
+        likes={profile.likes}
+        bio={profile.bio}
+        websiteUrl={profile.website_url}
+        subscription={profile.has_subscription}
       />
       
       <ProfileTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        showMusic={true}
+        showPayment={true}
       />
       
       <div className="pb-24">
         {renderContent()}
       </div>
 
-      <BottomNav activeTab={activeNavTab} onTabChange={setActiveNavTab} />
+      <BottomNav activeTab={activeNavTab} onTabChange={handleNavChange} />
     </div>
   );
 };
