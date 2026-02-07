@@ -29,13 +29,23 @@ const Auth = () => {
           },
         });
         if (error) throw error;
-        toast.success("Đăng ký thành công! Kiểm tra email để xác nhận.");
+        toast.success("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+        setIsSignUp(false);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("Invalid login credentials")) {
+            toast.error("Email hoặc mật khẩu không đúng. Vui lòng thử lại hoặc đăng ký tài khoản mới.");
+          } else if (error.message.includes("Email not confirmed")) {
+            toast.error("Email chưa được xác nhận. Vui lòng đăng ký lại.");
+          } else {
+            toast.error(error.message);
+          }
+          return;
+        }
         toast.success("Đăng nhập thành công!");
         navigate("/admin");
       }

@@ -119,6 +119,7 @@ export type Database = {
           likes: number | null
           updated_at: string | null
           username: string
+          verified_badge_url: string | null
           website_url: string | null
         }
         Insert: {
@@ -135,6 +136,7 @@ export type Database = {
           likes?: number | null
           updated_at?: string | null
           username?: string
+          verified_badge_url?: string | null
           website_url?: string | null
         }
         Update: {
@@ -151,6 +153,7 @@ export type Database = {
           likes?: number | null
           updated_at?: string | null
           username?: string
+          verified_badge_url?: string | null
           website_url?: string | null
         }
         Relationships: []
