@@ -78,15 +78,23 @@ const ProfileHeader = ({
       <div className="flex items-center gap-2 mb-1">
         <h1 className="text-xl font-bold text-foreground">{displayName}</h1>
         {isVerified && (
-          verifiedBadgeUrl ? (
-            <img 
-              src={verifiedBadgeUrl} 
-              alt="Verified" 
-              className="w-5 h-5 object-contain"
-            />
-          ) : (
-            <BadgeCheck className="w-5 h-5 text-blue-500" />
-          )
+          <div className="group relative cursor-pointer">
+            {verifiedBadgeUrl ? (
+              <img 
+                src={verifiedBadgeUrl} 
+                alt="Verified" 
+                className="w-5 h-5 object-contain transition-all duration-300 group-hover:scale-125 group-hover:rotate-12"
+              />
+            ) : (
+              <BadgeCheck className="w-5 h-5 text-blue-500 transition-all duration-300 group-hover:scale-125 group-hover:text-blue-400 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+            )}
+            {/* Pulse animation ring */}
+            <span className="absolute inset-0 rounded-full bg-blue-500/20 scale-0 group-hover:scale-150 transition-transform duration-500 -z-10" />
+            {/* Tooltip */}
+            <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+              Đã xác minh ✓
+            </span>
+          </div>
         )}
       </div>
       <p className="text-muted-foreground text-sm mb-4">@{username}</p>
