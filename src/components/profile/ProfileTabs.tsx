@@ -20,7 +20,7 @@ const ProfileTabs = ({ activeTab, onTabChange, showPayment = false }: ProfileTab
   ];
 
   return (
-    <div className="border-b border-border">
+    <div className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-20">
       <div className="flex items-center justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -31,13 +31,16 @@ const ProfileTabs = ({ activeTab, onTabChange, showPayment = false }: ProfileTab
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                "flex-1 flex items-center justify-center py-3 relative transition-colors",
-                isActive ? "text-foreground" : "text-muted-foreground"
+                "flex-1 flex items-center justify-center py-3.5 relative transition-all duration-300",
+                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className={cn(
+                "w-5 h-5 transition-transform duration-300",
+                isActive && "scale-110"
+              )} />
               {isActive && (
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-foreground rounded-full" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 gradient-primary rounded-full" />
               )}
             </button>
           );
