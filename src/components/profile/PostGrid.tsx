@@ -1,4 +1,5 @@
 import { Play, Repeat2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Post {
   id: string;
@@ -15,6 +16,8 @@ interface PostGridProps {
 }
 
 const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
+  const navigate = useNavigate();
+
   const formatViews = (views: number) => {
     if (views >= 1000000) {
       return (views / 1000000).toFixed(1) + "M";
@@ -25,34 +28,43 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
     return views.toString();
   };
 
+  const handlePostClick = (postId: string) => {
+    navigate(`/video/${postId}`);
+  };
+
   return (
     <div className="grid grid-cols-3 gap-0.5">
-      {posts.map((post) => (
+      {posts.map((post, index) => (
         <div
           key={post.id}
-          className="relative aspect-[3/4] bg-muted overflow-hidden group cursor-pointer"
+          onClick={() => handlePostClick(post.id)}
+          className="relative aspect-[3/4] bg-muted overflow-hidden group cursor-pointer animate-fade-in"
+          style={{ animationDelay: `${index * 50}ms` }}
         >
           <img
             src={post.thumbnailUrl}
             alt=""
-            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+            className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110 group-hover:brightness-110"
           />
           
           {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100 group-hover:opacity-80 transition-opacity" />
+          
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-all duration-300" />
           
           {/* Video indicator */}
           {post.isVideo && (
             <div className="absolute top-2 right-2">
-              <div className="w-5 h-5 bg-black/40 backdrop-blur-sm rounded flex items-center justify-center">
-                <Play className="w-3 h-3 text-white fill-white" />
+              <div className="w-5 h-5 bg-black/40 backdrop-blur-sm rounded flex items-center justify-center group-hover:bg-primary/80 transition-colors">
+                <Play className="w-3 h-3 text-primary-foreground fill-primary-foreground" />
               </div>
             </div>
           )}
           
           {/* Repost indicator */}
           {(showReposts || post.isRepost) && (
-            <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white text-xs">
+            <div className="absolute bottom-2 left-2 flex items-center gap-1 text-primary-foreground text-xs">
               <Repeat2 className="w-4 h-4" />
               {post.date && <span>{post.date}</span>}
             </div>
@@ -60,8 +72,8 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
           
           {/* Views */}
           {post.views && !showReposts && (
-            <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white text-xs font-medium">
-              <Play className="w-3 h-3 fill-white" />
+            <div className="absolute bottom-2 left-2 flex items-center gap-1 text-primary-foreground text-xs font-medium">
+              <Play className="w-3 h-3 fill-primary-foreground" />
               {formatViews(post.views)}
             </div>
           )}

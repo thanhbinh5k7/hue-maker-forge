@@ -1,5 +1,6 @@
 import { Bell, Share2, ChevronLeft, ChevronDown, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface ProfileHeaderProps {
   avatarUrl: string;
@@ -37,29 +38,30 @@ const ProfileHeader = ({
   };
 
   return (
-    <div className="flex flex-col items-center px-4 pt-4 pb-6">
+    <div className="flex flex-col items-center px-4 pt-4 pb-6 animate-fade-in">
       {/* Top Navigation */}
       <div className="w-full flex items-center justify-between mb-6">
-        <button className="p-2 -ml-2 hover:bg-muted rounded-full transition-colors">
+        <button className="p-2 -ml-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
           <ChevronLeft className="w-6 h-6 text-foreground" />
         </button>
-        <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-muted rounded-full transition-colors">
-            <Bell className="w-6 h-6 text-foreground" />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <button className="p-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
+            <Bell className="w-5 h-5 text-foreground" />
           </button>
-          <button className="p-2 hover:bg-muted rounded-full transition-colors">
-            <Share2 className="w-6 h-6 text-foreground" />
+          <button className="p-2 hover:bg-muted rounded-full transition-all duration-300 active:scale-95">
+            <Share2 className="w-5 h-5 text-foreground" />
           </button>
         </div>
       </div>
 
       {/* Avatar */}
-      <div className="relative mb-4">
-        <div className="w-24 h-24 rounded-full overflow-hidden ring-2 ring-border">
+      <div className="relative mb-4 group">
+        <div className="w-24 h-24 rounded-full overflow-hidden ring-2 ring-border transition-all duration-300 group-hover:ring-primary group-hover:ring-4">
           <img
             src={avatarUrl}
             alt={displayName}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         </div>
       </div>
@@ -78,31 +80,31 @@ const ProfileHeader = ({
 
       {/* Stats */}
       <div className="flex items-center gap-6 mb-5">
-        <div className="text-center">
-          <p className="text-lg font-bold text-foreground">{following}</p>
+        <div className="text-center group cursor-pointer">
+          <p className="text-lg font-bold text-foreground transition-colors group-hover:text-primary">{following}</p>
           <p className="text-xs text-muted-foreground">Following</p>
         </div>
         <div className="w-px h-8 bg-border" />
-        <div className="text-center">
-          <p className="text-lg font-bold text-foreground">{formatNumber(followers)}</p>
+        <div className="text-center group cursor-pointer">
+          <p className="text-lg font-bold text-foreground transition-colors group-hover:text-primary">{formatNumber(followers)}</p>
           <p className="text-xs text-muted-foreground">Followers</p>
         </div>
         <div className="w-px h-8 bg-border" />
-        <div className="text-center">
-          <p className="text-lg font-bold text-foreground">{formatNumber(likes)}</p>
+        <div className="text-center group cursor-pointer">
+          <p className="text-lg font-bold text-foreground transition-colors group-hover:text-primary">{formatNumber(likes)}</p>
           <p className="text-xs text-muted-foreground">Likes</p>
         </div>
       </div>
 
       {/* Action Buttons */}
       <div className="flex items-center gap-2 mb-5">
-        <Button variant="follow" size="follow">
+        <Button variant="follow" size="follow" className="transition-all duration-300 hover:scale-105 hover:shadow-lg">
           Follow
         </Button>
-        <Button variant="message" size="action">
+        <Button variant="message" size="action" className="transition-all duration-300 hover:scale-105">
           Message
         </Button>
-        <Button variant="icon" size="icon" className="rounded-full">
+        <Button variant="icon" size="icon" className="rounded-full transition-all duration-300 hover:scale-110 hover:rotate-180">
           <ChevronDown className="w-5 h-5" />
         </Button>
       </div>
@@ -115,7 +117,7 @@ const ProfileHeader = ({
             href={websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1 text-sm text-foreground hover:underline"
+            className="flex items-center justify-center gap-1 text-sm text-foreground hover:text-primary hover:underline transition-colors"
           >
             <span className="text-muted-foreground">🔗</span>
             {websiteUrl.replace("https://", "")}
