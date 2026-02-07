@@ -26,6 +26,7 @@ interface ProfileSettings {
   is_top: boolean;
   has_subscription: boolean;
   contact_url: string;
+  verified_badge_url: string;
 }
 
 interface Post {
@@ -103,6 +104,7 @@ const Admin = () => {
       if (profileData) setProfile({
         ...profileData,
         contact_url: (profileData as any).contact_url || "",
+        verified_badge_url: (profileData as any).verified_badge_url || "",
       });
 
       // Fetch posts
@@ -556,7 +558,16 @@ const Admin = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-4">
+                  <div>
+                    <Label>URL tích xanh/Badge (GIF hoặc ảnh)</Label>
+                    <Input
+                      placeholder="https://... (để trống = tích xanh mặc định)"
+                      value={profile.verified_badge_url || ""}
+                      onChange={(e) => setProfile({ ...profile, verified_badge_url: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Để trống sẽ dùng tích xanh mặc định như Telegram</p>
+                  </div>
+                  <div className="flex gap-4 flex-wrap">
                     <label className="flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -564,7 +575,7 @@ const Admin = () => {
                         onChange={(e) => setProfile({ ...profile, is_top: e.target.checked })}
                         className="w-4 h-4"
                       />
-                      <span className="text-sm">Hiển thị badge TOP</span>
+                      <span className="text-sm">Hiển thị tích xanh ✓</span>
                     </label>
                     <label className="flex items-center gap-2">
                       <input

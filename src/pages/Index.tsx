@@ -20,7 +20,8 @@ interface ProfileSettings {
   followers: number;
   likes: number;
   website_url: string;
-  is_top: boolean;
+  is_verified: boolean;
+  verified_badge_url: string;
   has_subscription: boolean;
   contact_url: string;
 }
@@ -60,7 +61,8 @@ const defaultProfile: ProfileSettings = {
   followers: 154000,
   likes: 154800,
   website_url: "https://ipinfo.io/json",
-  is_top: true,
+  is_verified: true,
+  verified_badge_url: "",
   has_subscription: true,
   contact_url: "",
 };
@@ -98,7 +100,8 @@ const Index = () => {
           followers: profileData.followers || 0,
           likes: profileData.likes || 0,
           website_url: profileData.website_url || "",
-          is_top: profileData.is_top || false,
+          is_verified: profileData.is_top || false,
+          verified_badge_url: (profileData as any).verified_badge_url || "",
           has_subscription: profileData.has_subscription || false,
           contact_url: (profileData as any).contact_url || "",
         });
@@ -204,7 +207,8 @@ const Index = () => {
           avatarUrl={profile.avatar_url || defaultProfile.avatar_url}
           displayName={profile.display_name}
           username={profile.username}
-          isTop={profile.is_top}
+          isVerified={profile.is_verified}
+          verifiedBadgeUrl={profile.verified_badge_url}
           following={profile.following}
           followers={profile.followers}
           likes={profile.likes}

@@ -1,4 +1,4 @@
-import { Bell, Share2, ChevronLeft, ChevronDown, Crown } from "lucide-react";
+import { Bell, Share2, ChevronLeft, ChevronDown, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -6,7 +6,8 @@ interface ProfileHeaderProps {
   avatarUrl: string;
   displayName: string;
   username: string;
-  isTop?: boolean;
+  isVerified?: boolean;
+  verifiedBadgeUrl?: string;
   following: number;
   followers: number;
   likes: number;
@@ -20,7 +21,8 @@ const ProfileHeader = ({
   avatarUrl,
   displayName,
   username,
-  isTop = false,
+  isVerified = false,
+  verifiedBadgeUrl,
   following,
   followers,
   likes,
@@ -75,11 +77,16 @@ const ProfileHeader = ({
       {/* Name & Username */}
       <div className="flex items-center gap-2 mb-1">
         <h1 className="text-xl font-bold text-foreground">{displayName}</h1>
-        {isTop && (
-          <span className="flex items-center gap-0.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-[hsl(var(--badge-top-foreground))] text-xs font-bold px-2.5 py-1 rounded-full shadow-md">
-            <Crown className="w-3 h-3" />
-            TOP
-          </span>
+        {isVerified && (
+          verifiedBadgeUrl ? (
+            <img 
+              src={verifiedBadgeUrl} 
+              alt="Verified" 
+              className="w-5 h-5 object-contain"
+            />
+          ) : (
+            <BadgeCheck className="w-5 h-5 text-blue-500" />
+          )
         )}
       </div>
       <p className="text-muted-foreground text-sm mb-4">@{username}</p>
