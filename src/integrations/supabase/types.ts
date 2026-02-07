@@ -14,7 +14,144 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      music_tracks: {
+        Row: {
+          created_at: string | null
+          duration: string | null
+          id: string
+          thumbnail_url: string
+          title: string
+          used_by_videos: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          thumbnail_url: string
+          title: string
+          used_by_videos?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          thumbnail_url?: string
+          title?: string
+          used_by_videos?: number | null
+        }
+        Relationships: []
+      }
+      payment_info: {
+        Row: {
+          account_holder: string | null
+          account_number: string | null
+          bank_name: string | null
+          created_at: string | null
+          id: string
+          momo_number: string | null
+          notes: string | null
+          updated_at: string | null
+          zalopay_number: string | null
+        }
+        Insert: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          id?: string
+          momo_number?: string | null
+          notes?: string | null
+          updated_at?: string | null
+          zalopay_number?: string | null
+        }
+        Update: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string | null
+          id?: string
+          momo_number?: string | null
+          notes?: string | null
+          updated_at?: string | null
+          zalopay_number?: string | null
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          created_at: string | null
+          date: string | null
+          id: string
+          is_video: boolean | null
+          thumbnail_url: string
+          views: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          is_video?: boolean | null
+          thumbnail_url: string
+          views?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string | null
+          id?: string
+          is_video?: boolean | null
+          thumbnail_url?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
+      profile_settings: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string
+          followers: number | null
+          following: number | null
+          has_subscription: boolean | null
+          id: string
+          is_top: boolean | null
+          likes: number | null
+          updated_at: string | null
+          username: string
+          website_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string
+          followers?: number | null
+          following?: number | null
+          has_subscription?: boolean | null
+          id?: string
+          is_top?: boolean | null
+          likes?: number | null
+          updated_at?: string | null
+          username?: string
+          website_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string
+          followers?: number | null
+          following?: number | null
+          has_subscription?: boolean | null
+          id?: string
+          is_top?: boolean | null
+          likes?: number | null
+          updated_at?: string | null
+          username?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
