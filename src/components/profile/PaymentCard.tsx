@@ -38,8 +38,38 @@ const PaymentCard = ({ payment }: PaymentCardProps) => {
     );
   }
 
+  // Generate SePay QR URL
+  const generateQRUrl = () => {
+    if (payment.bank_name && payment.account_number) {
+      const bankCode = payment.bank_name.toUpperCase().replace(/\s+/g, '');
+      return `https://qr.sepay.vn/img?acc=${payment.account_number}&bank=${bankCode}&template=qronly`;
+    }
+    return null;
+  };
+
+  const qrUrl = generateQRUrl();
+
   return (
     <div className="p-4 space-y-4">
+      {/* SePay QR Code */}
+      {qrUrl && (
+        <div className="gradient-card rounded-2xl border border-border/50 p-5 space-y-3 shadow-soft hover:shadow-medium transition-shadow">
+          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg text-center justify-center">
+            📱 Quét mã QR để thanh toán
+          </h3>
+          <div className="flex justify-center">
+            <img 
+              src={qrUrl} 
+              alt="QR Code thanh toán" 
+              className="w-48 h-48 rounded-xl border border-border/50"
+            />
+          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            {payment.bank_name} - {payment.account_number}
+          </p>
+        </div>
+      )}
+
       {payment.bank_name && (
         <div className="gradient-card rounded-2xl border border-border/50 p-5 space-y-3 shadow-soft hover:shadow-medium transition-shadow">
           <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">

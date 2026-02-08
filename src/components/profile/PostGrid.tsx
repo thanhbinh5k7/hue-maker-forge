@@ -1,5 +1,4 @@
 import { Play, Repeat2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 interface Post {
   id: string;
@@ -18,7 +17,6 @@ interface PostGridProps {
 }
 
 const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
-  const navigate = useNavigate();
 
   const formatViews = (views: number) => {
     if (views >= 1000000) {
@@ -30,9 +28,6 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
     return views.toString();
   };
 
-  const handlePostClick = (postId: string) => {
-    navigate(`/video/${postId}`);
-  };
 
   if (posts.length === 0) {
     return (
@@ -51,8 +46,7 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
         return (
           <div
             key={post.id}
-            onClick={() => handlePostClick(post.id)}
-            className="relative aspect-[3/4] bg-muted overflow-hidden group cursor-pointer animate-fade-in"
+            className="relative aspect-[3/4] bg-muted overflow-hidden group animate-fade-in"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <img
