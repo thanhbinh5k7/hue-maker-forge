@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       music_tracks: {
         Row: {
+          audio_url: string | null
           created_at: string | null
           duration: string | null
           id: string
@@ -24,6 +25,7 @@ export type Database = {
           used_by_videos: number | null
         }
         Insert: {
+          audio_url?: string | null
           created_at?: string | null
           duration?: string | null
           id?: string
@@ -32,6 +34,7 @@ export type Database = {
           used_by_videos?: number | null
         }
         Update: {
+          audio_url?: string | null
           created_at?: string | null
           duration?: string | null
           id?: string
@@ -155,6 +158,36 @@ export type Database = {
           username?: string
           verified_badge_url?: string | null
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      threads: {
+        Row: {
+          comments: number | null
+          content: string
+          created_at: string
+          id: string
+          images: string[] | null
+          likes: number | null
+          updated_at: string
+        }
+        Insert: {
+          comments?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          likes?: number | null
+          updated_at?: string
+        }
+        Update: {
+          comments?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          images?: string[] | null
+          likes?: number | null
+          updated_at?: string
         }
         Relationships: []
       }

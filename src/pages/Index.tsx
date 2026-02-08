@@ -6,10 +6,11 @@ import ProfileTabs from "@/components/profile/ProfileTabs";
 import PostGrid from "@/components/profile/PostGrid";
 import MusicList from "@/components/profile/MusicList";
 import PaymentCard from "@/components/profile/PaymentCard";
+import ThreadList from "@/components/profile/ThreadList";
 import BottomNav from "@/components/BottomNav";
 import ParticlesBackground from "@/components/ParticlesBackground";
 
-type TabType = "music" | "grid" | "payment" | "saved";
+import { TabType } from "@/components/profile/ProfileTabs";
 
 interface ProfileSettings {
   display_name: string;
@@ -51,6 +52,15 @@ interface PaymentInfo {
   notes: string;
 }
 
+interface Thread {
+  id: string;
+  content: string;
+  images: string[];
+  likes: number;
+  comments: number;
+  created_at: string;
+}
+
 // Fallback data
 const defaultProfile: ProfileSettings = {
   display_name: "One",
@@ -78,6 +88,7 @@ const Index = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [music, setMusic] = useState<MusicTrack[]>([]);
   const [payment, setPayment] = useState<PaymentInfo | null>(null);
+  const [threads, setThreads] = useState<Thread[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -151,6 +162,15 @@ const Index = () => {
       } catch {
         // Payment info not accessible for unauthenticated users
       }
+
+      // Fetch threads
+      const { data: threadsData } = await supabase
+        .from("threads")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (threadsData) {
+        setThreads(threadsData as Thread[]);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -171,6 +191,8 @@ const Index = () => {
         return <MusicList tracks={music} />;
       case "grid":
         return <PostGrid posts={posts.map((p) => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
+      case "threads":
+        return <ThreadList threads={threads} />;
       case "payment":
         return <PaymentCard payment={payment} />;
       case "saved":

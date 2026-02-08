@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { 
-  User, Music, FileText, CreditCard, Video, 
-  LogOut, Save, Plus, Trash2, ArrowLeft 
+  User, Music, FileText, CreditCard, 
+  LogOut, Save, Plus, Trash2, ArrowLeft, Upload, MessageSquare
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
@@ -43,6 +43,7 @@ interface MusicTrack {
   thumbnail_url: string;
   used_by_videos: number;
   duration: string;
+  audio_url?: string;
 }
 
 interface PaymentInfo {
@@ -55,21 +56,34 @@ interface PaymentInfo {
   notes: string;
 }
 
+interface Thread {
+  id: string;
+  content: string;
+  images: string[];
+  likes: number;
+  comments: number;
+  created_at: string;
+}
+
 const Admin = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const audioInputRef = useRef<HTMLInputElement>(null);
 
   // Data states
   const [profile, setProfile] = useState<ProfileSettings | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [music, setMusic] = useState<MusicTrack[]>([]);
   const [payment, setPayment] = useState<PaymentInfo | null>(null);
+  const [threads, setThreads] = useState<Thread[]>([]);
 
   // New item states
   const [newPost, setNewPost] = useState({ thumbnail_url: "", views: 0 });
-  const [newMusic, setNewMusic] = useState({ title: "", thumbnail_url: "", duration: "01:00" });
+  const [newMusic, setNewMusic] = useState({ title: "", thumbnail_url: "", duration: "01:00", audio_url: "" });
+  const [newThread, setNewThread] = useState({ content: "", images: "" });
+  const [uploadingAudio, setUploadingAudio] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -103,8 +117,8 @@ const Admin = () => {
         .single();
       if (profileData) setProfile({
         ...profileData,
-        contact_url: (profileData as any).contact_url || "",
-        verified_badge_url: (profileData as any).verified_badge_url || "",
+        contact_url: profileData.contact_url || "",
+        verified_badge_url: profileData.verified_badge_url || "",
       });
 
       // Fetch posts
@@ -119,7 +133,7 @@ const Admin = () => {
         .from("music_tracks")
         .select("*")
         .order("created_at", { ascending: false });
-      if (musicData) setMusic(musicData);
+      if (musicData) setMusic(musicData.map(m => ({ ...m, audio_url: (m as any).audio_url || "" })));
 
       // Fetch payment
       const { data: paymentData } = await supabase
@@ -127,6 +141,13 @@ const Admin = () => {
         .select("*")
         .single();
       if (paymentData) setPayment(paymentData);
+
+      // Fetch threads
+      const { data: threadsData } = await supabase
+        .from("threads")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (threadsData) setThreads(threadsData as Thread[]);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -204,6 +225,37 @@ const Admin = () => {
     }
   };
 
+  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.includes("audio")) {
+      toast.error("Vui lòng chọn file audio (MP3, WAV...)");
+      return;
+    }
+
+    setUploadingAudio(true);
+    try {
+      const fileName = `${Date.now()}-${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("audio")
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: urlData } = supabase.storage
+        .from("audio")
+        .getPublicUrl(data.path);
+
+      setNewMusic({ ...newMusic, audio_url: urlData.publicUrl });
+      toast.success("Đã upload file audio!");
+    } catch (error: any) {
+      toast.error("Lỗi upload: " + error.message);
+    } finally {
+      setUploadingAudio(false);
+    }
+  };
+
   const addMusic = async () => {
     if (!newMusic.title || !newMusic.thumbnail_url) {
       toast.error("Vui lòng điền đầy đủ thông tin");
@@ -216,8 +268,8 @@ const Admin = () => {
         .select()
         .single();
       if (error) throw error;
-      setMusic([data, ...music]);
-      setNewMusic({ title: "", thumbnail_url: "", duration: "01:00" });
+      setMusic([{ ...data, audio_url: (data as any).audio_url || "" }, ...music]);
+      setNewMusic({ title: "", thumbnail_url: "", duration: "01:00", audio_url: "" });
       toast.success("Đã thêm nhạc!");
     } catch (error: any) {
       toast.error(error.message);
@@ -230,6 +282,42 @@ const Admin = () => {
       if (error) throw error;
       setMusic(music.filter((m) => m.id !== id));
       toast.success("Đã xóa nhạc!");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const addThread = async () => {
+    if (!newThread.content.trim()) {
+      toast.error("Vui lòng nhập nội dung");
+      return;
+    }
+    try {
+      const imagesArray = newThread.images
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+
+      const { data, error } = await supabase
+        .from("threads")
+        .insert([{ content: newThread.content, images: imagesArray }])
+        .select()
+        .single();
+      if (error) throw error;
+      setThreads([data as Thread, ...threads]);
+      setNewThread({ content: "", images: "" });
+      toast.success("Đã đăng thread!");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const deleteThread = async (id: string) => {
+    try {
+      const { error } = await supabase.from("threads").delete().eq("id", id);
+      if (error) throw error;
+      setThreads(threads.filter((t) => t.id !== id));
+      toast.success("Đã xóa thread!");
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -267,7 +355,7 @@ const Admin = () => {
       {/* Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
         <Tabs defaultValue="music" className="space-y-6">
-          <TabsList className="grid grid-cols-4 w-full">
+          <TabsList className="grid grid-cols-5 w-full">
             <TabsTrigger value="music" className="gap-2">
               <Music className="w-4 h-4" />
               <span className="hidden sm:inline">Nhạc</span>
@@ -275,6 +363,10 @@ const Admin = () => {
             <TabsTrigger value="posts" className="gap-2">
               <FileText className="w-4 h-4" />
               <span className="hidden sm:inline">Bài viết</span>
+            </TabsTrigger>
+            <TabsTrigger value="threads" className="gap-2">
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Threads</span>
             </TabsTrigger>
             <TabsTrigger value="payment" className="gap-2">
               <CreditCard className="w-4 h-4" />
@@ -290,7 +382,7 @@ const Admin = () => {
           <TabsContent value="music" className="space-y-6">
             <div className="bg-card rounded-xl border border-border p-6">
               <h2 className="text-lg font-semibold mb-4">Thêm nhạc mới</h2>
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label>Tên bài hát</Label>
                   <Input
@@ -315,6 +407,38 @@ const Admin = () => {
                     onChange={(e) => setNewMusic({ ...newMusic, duration: e.target.value })}
                   />
                 </div>
+                <div>
+                  <Label>File MP3</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="URL hoặc upload..."
+                      value={newMusic.audio_url}
+                      onChange={(e) => setNewMusic({ ...newMusic, audio_url: e.target.value })}
+                      className="flex-1"
+                    />
+                    <input
+                      ref={audioInputRef}
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleAudioUpload}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => audioInputRef.current?.click()}
+                      disabled={uploadingAudio}
+                    >
+                      <Upload className={`w-4 h-4 ${uploadingAudio ? "animate-pulse" : ""}`} />
+                    </Button>
+                  </div>
+                  {newMusic.audio_url && (
+                    <audio controls className="mt-2 w-full h-8">
+                      <source src={newMusic.audio_url} />
+                    </audio>
+                  )}
+                </div>
               </div>
               <Button onClick={addMusic} className="mt-4 gap-2">
                 <Plus className="w-4 h-4" />
@@ -336,6 +460,11 @@ const Admin = () => {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{track.title}</p>
                     <p className="text-sm text-muted-foreground">{track.duration}</p>
+                    {track.audio_url && (
+                      <audio controls className="mt-1 w-full h-6">
+                        <source src={track.audio_url} />
+                      </audio>
+                    )}
                   </div>
                   <Button
                     variant="ghost"
@@ -408,6 +537,74 @@ const Admin = () => {
                 <div className="col-span-3 text-center text-muted-foreground py-8">
                   Chưa có bài viết nào
                 </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Threads Tab */}
+          <TabsContent value="threads" className="space-y-6">
+            <div className="bg-card rounded-xl border border-border p-6">
+              <h2 className="text-lg font-semibold mb-4">Đăng thread mới</h2>
+              <div className="space-y-4">
+                <div>
+                  <Label>Nội dung</Label>
+                  <Textarea
+                    placeholder="Viết gì đó..."
+                    rows={4}
+                    value={newThread.content}
+                    onChange={(e) => setNewThread({ ...newThread, content: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>URL ảnh (cách nhau bằng dấu phẩy)</Label>
+                  <Input
+                    placeholder="https://..., https://..."
+                    value={newThread.images}
+                    onChange={(e) => setNewThread({ ...newThread, images: e.target.value })}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Có thể thêm nhiều ảnh, mỗi URL cách nhau bằng dấu phẩy</p>
+                </div>
+              </div>
+              <Button onClick={addThread} className="mt-4 gap-2">
+                <Plus className="w-4 h-4" />
+                Đăng thread
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {threads.map((thread) => (
+                <div
+                  key={thread.id}
+                  className="bg-card rounded-lg border border-border p-4"
+                >
+                  <p className="whitespace-pre-wrap mb-2">{thread.content}</p>
+                  {thread.images && thread.images.length > 0 && (
+                    <div className="flex gap-2 mb-2 overflow-x-auto">
+                      {thread.images.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img}
+                          alt=""
+                          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>{new Date(thread.created_at).toLocaleString("vi-VN")}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteThread(thread.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              {threads.length === 0 && (
+                <p className="text-center text-muted-foreground py-8">Chưa có thread nào</p>
               )}
             </div>
           </TabsContent>
