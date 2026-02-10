@@ -142,6 +142,7 @@ const Index = () => {
             thumbnail_url: m.thumbnail_url,
             used_by_videos: m.used_by_videos ?? 0,
             duration: m.duration || "01:00",
+            audio_url: m.audio_url || "",
           })),
         );
       }
