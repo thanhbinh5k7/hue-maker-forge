@@ -199,8 +199,6 @@ const Index = () => {
         return <ThreadList threads={threads} />;
       case "payment":
         return <PaymentCard payment={payment} />;
-      case "saved":
-        return <PostGrid posts={[]} />;
       default:
         return <MusicList tracks={music} />;
     }

@@ -14,7 +14,6 @@ const ProfileTabs = ({ activeTab, onTabChange, showPayment = false }: ProfileTab
     { id: "music" as TabType, icon: Music, label: "Music" },
     { id: "grid" as TabType, icon: Grid3X3, label: "Posts" },
     { id: "threads" as TabType, icon: MessageSquare, label: "Threads" },
-    { id: "saved" as TabType, icon: Bookmark, label: "Saved" },
     ...(showPayment ? [{ id: "payment" as TabType, icon: CreditCard, label: "Payment" }] : []),
   ];
 
