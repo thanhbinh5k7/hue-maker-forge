@@ -1,7 +1,7 @@
 import { Grid3X3, Bookmark, Music, CreditCard, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TabType = "music" | "grid" | "payment" | "saved" | "threads";
+export type TabType = "music" | "grid" | "payment" | "threads";
 
 interface ProfileTabsProps {
   activeTab: TabType;
