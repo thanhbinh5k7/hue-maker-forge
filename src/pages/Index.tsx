@@ -41,6 +41,7 @@ interface MusicTrack {
   thumbnail_url: string;
   used_by_videos: number;
   duration: string;
+  audio_url?: string;
 }
 
 interface PaymentInfo {
