@@ -81,7 +81,6 @@ const defaultProfile: ProfileSettings = {
 const Index = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("music");
-  // Remove audio_url from interface - add it
 
   const [activeNavTab, setActiveNavTab] = useState("profile");
   const [loading, setLoading] = useState(true);
