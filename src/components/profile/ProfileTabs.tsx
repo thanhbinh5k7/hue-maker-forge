@@ -1,7 +1,7 @@
 import { Grid3X3, Bookmark, Music, CreditCard, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export type TabType = "music" | "grid" | "payment" | "saved" | "threads";
+export type TabType = "music" | "grid" | "payment" | "threads";
 
 interface ProfileTabsProps {
   activeTab: TabType;
@@ -14,7 +14,6 @@ const ProfileTabs = ({ activeTab, onTabChange, showPayment = false }: ProfileTab
     { id: "music" as TabType, icon: Music, label: "Music" },
     { id: "grid" as TabType, icon: Grid3X3, label: "Posts" },
     { id: "threads" as TabType, icon: MessageSquare, label: "Threads" },
-    { id: "saved" as TabType, icon: Bookmark, label: "Saved" },
     ...(showPayment ? [{ id: "payment" as TabType, icon: CreditCard, label: "Payment" }] : []),
   ];
 

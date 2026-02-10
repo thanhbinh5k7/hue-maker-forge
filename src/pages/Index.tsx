@@ -41,6 +41,7 @@ interface MusicTrack {
   thumbnail_url: string;
   used_by_videos: number;
   duration: string;
+  audio_url?: string;
 }
 
 interface PaymentInfo {
@@ -80,6 +81,7 @@ const defaultProfile: ProfileSettings = {
 const Index = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("music");
+
   const [activeNavTab, setActiveNavTab] = useState("profile");
   const [loading, setLoading] = useState(true);
 
@@ -142,6 +144,7 @@ const Index = () => {
             thumbnail_url: m.thumbnail_url,
             used_by_videos: m.used_by_videos ?? 0,
             duration: m.duration || "01:00",
+            audio_url: m.audio_url || "",
           })),
         );
       }
@@ -195,8 +198,6 @@ const Index = () => {
         return <ThreadList threads={threads} />;
       case "payment":
         return <PaymentCard payment={payment} />;
-      case "saved":
-        return <PostGrid posts={[]} />;
       default:
         return <MusicList tracks={music} />;
     }
