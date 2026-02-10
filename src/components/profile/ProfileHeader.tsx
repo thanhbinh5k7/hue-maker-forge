@@ -155,8 +155,8 @@ const ProfileHeader = ({
       </div>
 
       {/* Bio */}
-      <div className="text-center space-y-1.5">
-        <p className="text-sm text-foreground font-medium">{bio}</p>
+      <div className="text-center space-y-1.5 max-w-xs">
+        <p className="text-sm text-foreground font-medium whitespace-pre-line leading-relaxed">{bio}</p>
         {websiteUrl && (
           <a
             href={websiteUrl}
