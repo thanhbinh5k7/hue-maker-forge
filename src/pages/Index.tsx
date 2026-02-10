@@ -149,21 +149,17 @@ const Index = () => {
         );
       }
 
-      // Fetch payment (may fail if not authenticated)
-      try {
-        const { data: paymentData } = await supabase.from("payment_info").select("*").single();
-        if (paymentData) {
-          setPayment({
-            bank_name: paymentData.bank_name || "",
-            account_number: paymentData.account_number || "",
-            account_holder: paymentData.account_holder || "",
-            momo_number: paymentData.momo_number || "",
-            zalopay_number: paymentData.zalopay_number || "",
-            notes: paymentData.notes || "",
-          });
-        }
-      } catch {
-        // Payment info not accessible for unauthenticated users
+      // Fetch payment
+      const { data: paymentData } = await supabase.from("payment_info").select("*").single();
+      if (paymentData) {
+        setPayment({
+          bank_name: paymentData.bank_name || "",
+          account_number: paymentData.account_number || "",
+          account_holder: paymentData.account_holder || "",
+          momo_number: paymentData.momo_number || "",
+          zalopay_number: paymentData.zalopay_number || "",
+          notes: paymentData.notes || "",
+        });
       }
 
       // Fetch threads
