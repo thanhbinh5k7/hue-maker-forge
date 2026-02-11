@@ -80,7 +80,7 @@ const Admin = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
 
   // New item states
-  const [newPost, setNewPost] = useState({ thumbnail_url: "", views: 0 });
+  const [newPost, setNewPost] = useState({ thumbnail_url: "", views: 0, video_url: "" });
   const [newMusic, setNewMusic] = useState({ title: "", thumbnail_url: "", duration: "01:00", audio_url: "" });
   const [newThread, setNewThread] = useState({ content: "", images: "" });
   const [uploadingAudio, setUploadingAudio] = useState(false);
@@ -202,12 +202,12 @@ const Admin = () => {
     try {
       const { data, error } = await supabase
         .from("posts")
-        .insert([{ ...newPost, is_video: true }])
+        .insert([{ thumbnail_url: newPost.thumbnail_url, views: newPost.views, is_video: true, video_url: newPost.video_url }])
         .select()
         .single();
       if (error) throw error;
       setPosts([data, ...posts]);
-      setNewPost({ thumbnail_url: "", views: 0 });
+      setNewPost({ thumbnail_url: "", views: 0, video_url: "" });
       toast.success("Đã thêm bài viết!");
     } catch (error: any) {
       toast.error(error.message);
@@ -493,6 +493,14 @@ const Admin = () => {
                     placeholder="https://..."
                     value={newPost.thumbnail_url}
                     onChange={(e) => setNewPost({ ...newPost, thumbnail_url: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Link video (TikTok, YouTube...)</Label>
+                  <Input
+                    placeholder="https://..."
+                    value={newPost.video_url}
+                    onChange={(e) => setNewPost({ ...newPost, video_url: e.target.value })}
                   />
                 </div>
                 <div>

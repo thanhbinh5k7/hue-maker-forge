@@ -87,6 +87,7 @@ export type Database = {
           id: string
           is_video: boolean | null
           thumbnail_url: string
+          video_url: string | null
           views: number | null
         }
         Insert: {
@@ -95,6 +96,7 @@ export type Database = {
           id?: string
           is_video?: boolean | null
           thumbnail_url: string
+          video_url?: string | null
           views?: number | null
         }
         Update: {
@@ -103,6 +105,7 @@ export type Database = {
           id?: string
           is_video?: boolean | null
           thumbnail_url?: string
+          video_url?: string | null
           views?: number | null
         }
         Relationships: []

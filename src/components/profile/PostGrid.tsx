@@ -9,6 +9,8 @@ interface Post {
   isRepost?: boolean;
   date?: string | null;
   views?: number;
+  videoUrl?: string;
+  video_url?: string;
 }
 
 interface PostGridProps {
@@ -42,11 +44,16 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
       {posts.map((post, index) => {
         const thumbnailUrl = post.thumbnailUrl || post.thumbnail_url;
         const isVideo = post.isVideo ?? post.is_video ?? true;
+        const videoUrl = post.videoUrl || post.video_url;
+        
+        const Wrapper = videoUrl ? 'a' : 'div';
+        const wrapperProps = videoUrl ? { href: videoUrl, target: '_blank', rel: 'noopener noreferrer' } : {};
         
         return (
-          <div
+          <Wrapper
             key={post.id}
-            className="relative aspect-[3/4] bg-muted overflow-hidden group animate-fade-in"
+            {...wrapperProps}
+            className="relative aspect-[3/4] bg-muted overflow-hidden group animate-fade-in block"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <img
@@ -85,7 +92,7 @@ const PostGrid = ({ posts, showReposts = false }: PostGridProps) => {
                 {formatViews(post.views)}
               </div>
             )}
-          </div>
+          </Wrapper>
         );
       })}
     </div>
