@@ -91,9 +91,6 @@ const MusicList = ({ tracks }: MusicListProps) => {
               <h3 className={`font-semibold text-sm truncate transition-colors ${isPlaying ? 'text-primary' : 'text-foreground group-hover:text-primary'}`}>
                 {track.title}
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {track.used_by_videos ?? track.usedByVideos ?? 0} video sử dụng
-              </p>
               <p className="text-xs text-muted-foreground">{track.duration}</p>
             </div>
 

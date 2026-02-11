@@ -87,7 +87,7 @@ const Index = () => {
 
   // Data from database
   const [profile, setProfile] = useState<ProfileSettings>(defaultProfile);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<(Post & { video_url?: string })[]>([]);
   const [music, setMusic] = useState<MusicTrack[]>([]);
   const [payment, setPayment] = useState<PaymentInfo | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -127,6 +127,7 @@ const Index = () => {
             is_video: p.is_video ?? true,
             views: p.views ?? 0,
             date: p.date,
+            video_url: (p as any).video_url || "",
           })),
         );
       }
@@ -189,7 +190,7 @@ const Index = () => {
       case "music":
         return <MusicList tracks={music} />;
       case "grid":
-        return <PostGrid posts={posts.map((p) => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video }))} />;
+        return <PostGrid posts={posts.map((p) => ({ ...p, thumbnailUrl: p.thumbnail_url, isVideo: p.is_video, videoUrl: p.video_url }))} />;
       case "threads":
         return <ThreadList threads={threads} />;
       case "payment":
