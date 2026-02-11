@@ -92,29 +92,6 @@ const PaymentCard = ({ payment }: PaymentCardProps) => {
         </div>
       )}
 
-      {payment.momo_number && (
-        <div className="bg-gradient-to-br from-pink-500/10 to-purple-500/10 rounded-2xl border border-pink-200 dark:border-pink-900/50 p-5 space-y-2 shadow-soft">
-          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">
-            💜 MoMo
-          </h3>
-          <p className="font-mono text-lg font-semibold">{payment.momo_number}</p>
-        </div>
-      )}
-
-      {payment.zalopay_number && (
-        <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl border border-blue-200 dark:border-blue-900/50 p-5 space-y-2 shadow-soft">
-          <h3 className="font-bold text-foreground flex items-center gap-2 text-lg">
-            💙 ZaloPay
-          </h3>
-          <p className="font-mono text-lg font-semibold">{payment.zalopay_number}</p>
-        </div>
-      )}
-
-      {payment.notes && (
-        <div className="bg-muted/50 rounded-2xl p-5">
-          <p className="text-sm text-muted-foreground italic">{payment.notes}</p>
-        </div>
-      )}
     </div>
   );
 };
