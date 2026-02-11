@@ -649,32 +649,6 @@ const Admin = () => {
                       onChange={(e) => setPayment({ ...payment, account_holder: e.target.value })}
                     />
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <Label>Số MoMo</Label>
-                      <Input
-                        placeholder="0912345678"
-                        value={payment.momo_number}
-                        onChange={(e) => setPayment({ ...payment, momo_number: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label>Số ZaloPay</Label>
-                      <Input
-                        placeholder="0912345678"
-                        value={payment.zalopay_number}
-                        onChange={(e) => setPayment({ ...payment, zalopay_number: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label>Ghi chú</Label>
-                    <Textarea
-                      placeholder="Thông tin thêm..."
-                      value={payment.notes}
-                      onChange={(e) => setPayment({ ...payment, notes: e.target.value })}
-                    />
-                  </div>
                   <Button onClick={savePayment} disabled={saving} className="gap-2">
                     <Save className="w-4 h-4" />
                     {saving ? "Đang lưu..." : "Lưu thông tin"}
